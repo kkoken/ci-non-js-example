@@ -1,0 +1,20 @@
+ci:
+  autofix_prs: false
+
+exclude: '.*\.json$'
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: detect-private-key
+      - id: check-merge-conflict
+  - repo: https://github.com/jcchavezs/pre-commit-kotlin
+    rev: HEAD
+    hooks:
+      - id: ktlint
+        args:
+          - --color

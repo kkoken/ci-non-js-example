@@ -1,0 +1,11 @@
+version: "0.2"
+ignorePaths:
+  - "**/.vscode/**/"
+  - "**/*.json"
+  - cspell.config.yaml
+dictionaryDefinitions: []
+dictionaries: []
+ignoreWords:
+  - commitlint
+  - conventionalcommits
+import: []

@@ -1,0 +1,16 @@
+
+name: Semantic-Release
+on:
+  push:
+    branches:
+      - master
+      - main
+      - dev
+      - development
+
+jobs:
+  release:
+    name: Pre-release
+    runs-on: ubuntu-latest
+
+    #TODO: pre-release
