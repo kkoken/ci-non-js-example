@@ -9,8 +9,62 @@ on:
       - development
 
 jobs:
-  release:
-    name: Pre-release
+  changelog:
+    name: Generate changelog
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    #TODO: pre-release
+      - name: Generate a dev changelog
+        if: ${{ (needs.rules.outputs.branch_name == 'dev') || (needs.rules.outputs.branch_name == 'development') }}
+        uses: orhun/git-cliff-action@v2
+        id: git-cliff
+        with:
+          config: ./config/cliff-dev.toml
+        env:
+          OUTPUT: docs/CHANGELOG-dev.md
+      
+      - name: Generate a changelog
+        if: ${{ (needs.rules.outputs.branch_name == 'main') || (needs.rules.outputs.branch_name == 'master') }}
+        uses: orhun/git-cliff-action@v2
+        id: git-cliff
+        with:
+          config: ./config/cliff.toml
+          args: -vv --latest --strip header
+        env:
+          OUTPUT: docs/CHANGELOG.md
+  
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [changelog]
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+
+      - name: Install dependencies
+        run: |
+          npm install --dev semantic-release
+          npm install --dev @semantic-release/git
+
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release

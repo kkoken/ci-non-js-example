@@ -36,3 +36,5 @@ jobs:
         uses: oknozor/cocogitto-action@v2
         with:
           check-latest-tag-only: true
+          git-user: 'github-actions'
+          git-user-email: 'github-actions@github.com'
