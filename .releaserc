@@ -1,27 +1,27 @@
 {
-    "branches": [
-      "master",
-      "main",
+  "branches": [
+    "master",
+    "main",
+    {
+      "name": "dev",
+      "prerelease": true
+    },
+    {
+      "name": "development",
+      "prerelease": true
+    }
+  ],
+  "plugins": [
+    [
+      "@semantic-release/git",
       {
-        "name": "dev",
-        "prerelease": true
-      },
-      {
-        "name": "development",
-        "prerelease": true
+        "assets": [
+          "docs/CHANGELOG.md",
+          "docs/CHANGELOG-dev.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
-    ],
-    "plugins": [
-      [
-        "@semantic-release/git",
-        {
-          "assets": [
-            "docs/CHANGELOG.md",
-            "docs/CHANGELOG-dev.md"
-          ],
-          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-        }
-      ]
-    ],
-    "preset": "angular"
-  }
+    ]
+  ],
+  "preset": "angular"
+}
