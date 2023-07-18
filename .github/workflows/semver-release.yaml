@@ -18,24 +18,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate a dev changelog
-        if: ${{ (needs.rules.outputs.branch_name == 'dev') || (needs.rules.outputs.branch_name == 'development') }}
-        uses: orhun/git-cliff-action@v2
-        id: git-cliff
-        with:
-          config: ./config/cliff-dev.toml
+      - name: Check pre-release
         env:
-          OUTPUT: docs/CHANGELOG-dev.md
+          is_pre: ${{ (needs.rules.outputs.branch_name == 'dev') || (needs.rules.outputs.branch_name == 'development') }}
+        run: |
+          if ${is_pre} == true
+          then
+            echo "config=config\/cliff-dev.toml" >> $GITHUB_ENV
+            echo "docs=docs\/CHANGELOG-dev.md" >> $GITHUB_ENV
+            echo "flag set to true"
+          else
+            echo "config=config\/cliff.toml'" >> $GITHUB_ENV
+            echo "docs=docs\/CHANGELOG.md" >> $GITHUB_ENV
+            echo "flag set to false"
+          fi
 
       - name: Generate a changelog
-        if: ${{ (needs.rules.outputs.branch_name == 'main') || (needs.rules.outputs.branch_name == 'master') }}
         uses: orhun/git-cliff-action@v2
         id: git-cliff
         with:
-          config: ./config/cliff.toml
+          config: env.config
           args: -vv --latest --strip header
         env:
-          OUTPUT: docs/CHANGELOG.md
+          OUTPUT: env.docs
 
   release:
     name: Release
