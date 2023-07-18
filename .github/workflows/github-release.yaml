@@ -1,10 +1,10 @@
-
 name: Github-Release
 on:
   push:
     # Pattern matched against refs/tags
-    tags:     
+    tags:
       - '**'
+
 jobs:
   generate-changelog-body:
     name: Generate changelog
